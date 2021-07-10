@@ -1,0 +1,27 @@
+---
+- hosts: aws2
+  become: yes
+  become_method: sudo
+  remote_user: ubuntu
+
+  tasks:
+  - name: Copy the war file hello.war as hello.war.tmp to /opt/tomcat/webapps
+    copy:
+      src: target/hello.war
+      dest: "/opt/tomcat/webapps/hello.war.tmp"
+      force: yes 
+
+  - name: Remove current war file /opt/tomcat/webapps/hello.war
+    file:
+      path: "/opt/tomcat/webapps/hello.war"
+      state: absent
+
+  - name: Wait until the webapps folder /opt/tomcat/webapps/hello is deleted
+    wait_for:
+      path: "/opt/tomcat/webapps/helloxxx"
+      state: absent
+    register: folder_info
+
+  - name: rename the hello.war.tmp to hello.war
+    command: "mv /opt/tomcat/webapps/hello.war.tmp /opt/tomcat/webapps/hello.war"
+    register: cmd_result
