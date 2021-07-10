@@ -1,6 +1,5 @@
 ---
-- hosts: all
-
+- hosts: aws
   become: yes
   become_method: sudo
   remote_user: ubuntu
